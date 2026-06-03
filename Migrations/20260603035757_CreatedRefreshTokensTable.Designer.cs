@@ -3,6 +3,7 @@ using System;
 using BuildSync.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuildSync.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260603035757_CreatedRefreshTokensTable")]
+    partial class CreatedRefreshTokensTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,13 +25,13 @@ namespace BuildSync.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BuildSync.Models.RefreshToken", b =>
+            modelBuilder.Entity("BuildSync.Models.RefreshTokens", b =>
                 {
-                    b.Property<int>("RefreshTokenId")
+                    b.Property<int>("RefreshTokensId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RefreshTokenId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RefreshTokensId"));
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -46,7 +49,7 @@ namespace BuildSync.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("RefreshTokenId");
+                    b.HasKey("RefreshTokensId");
 
                     b.HasIndex("UserId");
 
@@ -86,7 +89,7 @@ namespace BuildSync.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BuildSync.Models.RefreshToken", b =>
+            modelBuilder.Entity("BuildSync.Models.RefreshTokens", b =>
                 {
                     b.HasOne("BuildSync.Models.User", "User")
                         .WithMany()
