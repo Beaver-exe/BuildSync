@@ -11,4 +11,7 @@ public class AppDbContext : DbContext
     }
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Project> Projects => Set<Project>();
+    public DbSet<ProjectCategory> ProjectCategories => Set<ProjectCategory>();
+    public DbSet<Document> Documents => Set<Document>();
 }
