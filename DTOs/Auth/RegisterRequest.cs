@@ -1,4 +1,4 @@
-namespace BuildSync.DTOs;
+namespace BuildSync.DTOs.Auth;
 
 public class RegisterRequest
 {

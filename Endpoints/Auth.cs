@@ -1,6 +1,6 @@
 using BuildSync.Data;
 using BuildSync.Models;
-using BuildSync.DTOs;
+using BuildSync.DTOs.Auth;
 using BuildSync.Service;
 
 using Microsoft.EntityFrameworkCore;
