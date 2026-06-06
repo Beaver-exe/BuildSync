@@ -13,7 +13,7 @@ public static class UserEndpoints
         group.MapGet("/", async (AppDbContext db) =>
         {
            return await db.Users.ToListAsync();
-        });
+        }).RequireAuthorization();
 
         group.MapPost("/", async (AppDbContext db, User user) =>
         {
