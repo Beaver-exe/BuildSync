@@ -1,7 +1,7 @@
 using System.Text;
 using BuildSync.Data;
 using BuildSync.Endpoints;
-using BuildSync.Service;
+using BuildSync.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

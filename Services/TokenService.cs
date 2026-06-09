@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BuildSync.Service;
+namespace BuildSync.Services;
 
 public class TokenService
 {

@@ -1,7 +1,7 @@
 using BuildSync.Data;
 using BuildSync.Models;
 using BuildSync.DTOs.Auth;
-using BuildSync.Service;
+using BuildSync.Services;
 
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
