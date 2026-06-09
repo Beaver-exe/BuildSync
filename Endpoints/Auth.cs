@@ -1,10 +1,5 @@
-using BuildSync.Data;
-using BuildSync.Models;
 using BuildSync.DTOs.Auth;
 using BuildSync.Services;
-
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace BuildSync.Endpoints;
 
