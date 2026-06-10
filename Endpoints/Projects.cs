@@ -24,7 +24,11 @@ public static class Projects
                 return Results.BadRequest("Error retrieving project details");
             }
 
-            return Results.Ok(project);
+            return Results.Ok(new ProjectDtoResponse
+            {
+                Message = "Project details found",
+                Project = project
+            });
         });
 
         app.MapPost("/", async (ProjectService proj, CreateProjectRequest request) =>
