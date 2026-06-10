@@ -2,5 +2,5 @@ namespace BuildSync.DTOs.Project;
 
 public class CreateProjectResponse
 {
-    public ProjectDto Project { get; set; } = null!;
+    public GetProjectDto Project { get; set; } = null!;
 }
