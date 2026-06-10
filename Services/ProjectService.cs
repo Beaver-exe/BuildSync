@@ -17,7 +17,7 @@ public class ProjectService
         _currentUser = currentUser;
     }
 
-    public async Task<GetProjectResponse> RetrieveProjectsAsync()
+    public async Task<GetProjectsResponse> RetrieveProjectsAsync()
     {
         var userId = _currentUser.UserId;
         var projects = await _db.Projects
@@ -27,11 +27,11 @@ public class ProjectService
                 p.ProjectUsers.Any(u => u.UserId == userId))
             .ToListAsync();
 
-        var response = new GetProjectResponse
+        var response = new GetProjectsResponse
         {   
             Message = "Projects retrieval successful",
             
-            Projects = projects.Select(p => new GetProjectDto
+            Projects = projects.Select(p => new GetProjectsDto
             {
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
@@ -45,6 +45,12 @@ public class ProjectService
 
         return response;
     }
+
+    public async Task<ProjectDto?> RetrieveProjectAsync(int ProjectId)
+    {
+        return null;
+    }
+
 
     public async Task<ProjectDto> CreateProjectAsync(CreateProjectRequest request)
     {
@@ -91,5 +97,4 @@ public class ProjectService
 
         return dto;
     }
-
 }

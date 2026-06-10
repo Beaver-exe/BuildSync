@@ -9,15 +9,27 @@ public static class Projects
     {
         var group = app.MapGroup("/project").RequireAuthorization();
         
-        app.MapGet("/", async (ProjectService project) =>
+        app.MapGet("/", async (ProjectService proj) =>
         {
-            GetProjectResponse projects = await project.RetrieveProjectsAsync();
+            GetProjectsResponse projects = await proj.RetrieveProjectsAsync();
             return Results.Ok(projects);
         });
 
-        app.MapPost("/", async (ProjectService project, CreateProjectRequest request) =>
+        app.MapGet("/{projectId}", async (ProjectService proj, int projectId) =>
         {
-            var newProject = await project.CreateProjectAsync(request);
+            var project = await proj.RetrieveProjectAsync(projectId);
+
+            if (project == null)
+            {
+                return Results.BadRequest("Error retrieving project details");
+            }
+
+            return Results.Ok(project);
+        });
+
+        app.MapPost("/", async (ProjectService proj, CreateProjectRequest request) =>
+        {
+            var newProject = await proj.CreateProjectAsync(request);
             return Results.Ok(new CreateProjectResponse
             {
                 Project = newProject
