@@ -80,11 +80,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProjectService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapGet("/", () => "BuildSync API");
 app.MapUserEndpoints();
