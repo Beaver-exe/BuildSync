@@ -40,5 +40,20 @@ public static class Projects
             });
 
         });
+
+        app.MapPatch("/edit/{projectId}", async (ProjectService proj, CreateProjectRequest request, int projectId) => 
+        {
+            var updatedProject = await proj.EditProjectAsync(request, projectId);
+
+            if (updatedProject == null)
+            {
+                return Results.BadRequest("Error retrieving project details");
+            }
+
+            return Results.Ok(new CreateProjectResponse
+            {
+                Project = updatedProject
+            });
+        });
     }
 }

@@ -77,4 +77,32 @@ public class ProjectService
 
         return ProjectMapper.ToSummaryDto(project, userId);
     }
+
+    public async Task<GetProjectDto?> EditProjectAsync(CreateProjectRequest request, int projectId)
+    {   
+        var userId = _currentUser.UserId;
+
+        var project = await _db.Projects
+        .Include(p => p.ProjectUsers)
+        .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+        {
+            return null;
+        }
+
+        var membership = project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+
+        if (membership?.Role != "Admin")
+        {
+            return null;
+        }
+        
+        project.ProjectName = request.ProjectName;
+        project.ProjectDescription = request.ProjectDescription;
+
+        await _db.SaveChangesAsync();
+       
+        return ProjectMapper.ToSummaryDto(project, userId);
+    }
 }
