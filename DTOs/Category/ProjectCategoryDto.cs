@@ -1,6 +1,4 @@
-using BuildSync.DTOs.Document;
-
-namespace BuildSync.DTOs.Project;
+namespace BuildSync.DTOs.Category;
 
 public class ProjectCategoryDto
 {
