@@ -1,4 +1,5 @@
 using BuildSync.DTOs.Project;
+using BuildSync.DTOs.Category;
 using BuildSync.DTOs.Users;
 using BuildSync.Models;
 

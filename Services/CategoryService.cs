@@ -1,6 +1,7 @@
 using BuildSync.DTOs.Category;
 using BuildSync.Data;
 using BuildSync.Models;
+using BuildSync.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuildSync.Services;
@@ -21,8 +22,8 @@ public class CategoryService
         int userId = _currentUser.UserId;
         
         var project = await _db.Projects
-        .Include(p => p.ProjectUsers)
-        .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+            .Include(p => p.ProjectUsers)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
         
         if (project == null)
         {
@@ -51,5 +52,21 @@ public class CategoryService
             CategoryName = category.CategoryName
         };
     }
+
+    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(int categoryId)
+    {
+        var categoryExists = await _db.ProjectCategories
+            .AnyAsync(c => c.ProjectCategoryId == categoryId);
+
+        if (!categoryExists)
+        {
+            return null;
+        }
+
+        var documents = await _db.Documents
+            .Where(d => d.ProjectCategoryId == categoryId)
+            .ToListAsync();
     
+        return DocumentMapper.ToCategoryDocuments(documents);
+    }
 }
