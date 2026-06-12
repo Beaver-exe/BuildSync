@@ -7,15 +7,15 @@ public static class Projects
 {
     public static void MapProjectEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/project").RequireAuthorization();
+        var group = app.MapGroup("/projects").RequireAuthorization();
         
-        app.MapGet("/", async (ProjectService proj) =>
+        group.MapGet("/", async (ProjectService proj) =>
         {
             GetProjectsResponse projects = await proj.RetrieveProjectsAsync();
             return Results.Ok(projects);
         });
 
-        app.MapGet("/{projectId}", async (ProjectService proj, int projectId) =>
+        group.MapGet("/{projectId}", async (ProjectService proj, int projectId) =>
         {
             var project = await proj.RetrieveProjectAsync(projectId);
 
@@ -31,7 +31,7 @@ public static class Projects
             });
         });
 
-        app.MapPost("/", async (ProjectService proj, CreateProjectRequest request) =>
+        group.MapPost("/", async (ProjectService proj, CreateProjectRequest request) =>
         {
             var newProject = await proj.CreateProjectAsync(request);
             return Results.Ok(new CreateProjectResponse
@@ -41,7 +41,7 @@ public static class Projects
 
         });
 
-        app.MapPatch("/edit/{projectId}", async (ProjectService proj, CreateProjectRequest request, int projectId) => 
+        group.MapPatch("/{projectId}", async (ProjectService proj, CreateProjectRequest request, int projectId) => 
         {
             var updatedProject = await proj.EditProjectAsync(request, projectId);
 
@@ -56,7 +56,7 @@ public static class Projects
             });
         });
 
-        app.MapDelete("/{projectId}", async (ProjectService proj, int projectId) =>
+        group.MapDelete("/{projectId}", async (ProjectService proj, int projectId) =>
         {
            var sucess = await proj.DeleteProjectAsync(projectId) ;
 

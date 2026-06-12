@@ -9,7 +9,7 @@ public static class Auth
     {
         var group = app.MapGroup("/auth");
 
-        app.MapPost("/register", async (AuthService auth, RegisterRequest request) =>
+        group.MapPost("/register", async (AuthService auth, RegisterRequest request) =>
         {
             var token = await auth.RegisterAsync(request);
 
@@ -26,7 +26,7 @@ public static class Auth
 
         });
 
-        app.MapPost("/login", async (AuthService auth, LoginRequest request) =>
+        group.MapPost("/login", async (AuthService auth, LoginRequest request) =>
         {
             var token = await auth.LoginAsync(request);
 
