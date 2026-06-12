@@ -50,7 +50,7 @@ public class MemberService
         };
     }
 
-    public async Task<bool> AddMemberAsync(int projectId, AddMemberRequest request)
+    public async Task<bool> AddMemberAsync(int projectId, MemberRequest request)
     {
         var result = await ResolveAdminUserAsync(projectId, request.Email);
 
@@ -82,7 +82,7 @@ public class MemberService
         return true;
     }
 
-    public async Task<bool> EditMemberStatus(int projectId, EditMemberRequest request)
+    public async Task<bool> EditMemberStatus(int projectId, MemberRequest request)
     {
         var result = await ResolveAdminUserAsync(projectId, request.Email);
 

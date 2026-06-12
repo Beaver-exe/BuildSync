@@ -9,7 +9,7 @@ public static class Members
     {
         var group = app.MapGroup("/projects/{projectId}/members").RequireAuthorization();
 
-        group.MapPost("/", async (MemberService memb, int projectId, AddMemberRequest request) =>
+        group.MapPost("/", async (MemberService memb, int projectId, MemberRequest request) =>
         {
             var success = await memb.AddMemberAsync(projectId, request);
 
@@ -21,7 +21,7 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapPatch("/", async (MemberService memb, int projectId, EditMemberRequest request) =>
+        group.MapPatch("/", async (MemberService memb, int projectId, MemberRequest request) =>
         {
             var success = await memb.EditMemberStatus(projectId, request);
 
@@ -32,6 +32,6 @@ public static class Members
 
             return Results.Ok();
         });
-
+    
     }
 }
