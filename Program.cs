@@ -80,9 +80,11 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProjectAuthorizationService>();
+
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<MemberService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -101,5 +103,6 @@ app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapProjectEndpoints();
 app.MapCategoryEndpoints();
+app.MapMemberEndpoints();
 
 app.Run();
