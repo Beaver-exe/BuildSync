@@ -1,4 +1,4 @@
-namespace BuildSync.DTOs.Project;
+namespace BuildSync.DTOs.Member;
 
 public class ProjectUserDto
 {
