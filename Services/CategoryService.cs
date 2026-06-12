@@ -9,38 +9,27 @@ namespace BuildSync.Services;
 public class CategoryService
 {
     private readonly AppDbContext _db;
-    private readonly CurrentUserService _currentUser;
+    private readonly ProjectAuthorizationService _auth;
 
-    public CategoryService(AppDbContext db, CurrentUserService currentUser)
+    public CategoryService(AppDbContext db, ProjectAuthorizationService auth)
     {
         _db = db;
-        _currentUser = currentUser;
+        _auth = auth;
     }
 
     public async Task<ProjectCategoryDto?> CreateCategoryAsync(int projectId, CreateCategoryRequest request)
     {
-        int userId = _currentUser.UserId;
-        
-        var project = await _db.Projects
-            .Include(p => p.ProjectUsers)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        
+        var project = await _auth.GetProjectIfAdminAsync(projectId);
+
         if (project == null)
-        {
-            return null;
-        }
-
-        var membership = project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
-
-        if (membership?.Role != "Admin")
         {
             return null;
         }
 
         var category = new ProjectCategory
         {
-          CategoryName = request.CategoryName,
-          ProjectId = projectId  
+            CategoryName = request.CategoryName,
+            ProjectId = projectId
         };
 
         _db.ProjectCategories.Add(category);
@@ -53,23 +42,21 @@ public class CategoryService
         };
     }
 
-    public async Task<bool> DeleteCategoryAsync(int categoryId)
+    public async Task<bool> DeleteCategoryAsync(int projectId, int categoryId)
     {
-        var userId = _currentUser.UserId;
+        var project = await _auth.GetProjectIfAdminAsync(projectId);
 
-        var category = await _db.ProjectCategories
-            .Include(c => c.Project)
-                .ThenInclude(p => p.ProjectUsers)
-            .FirstOrDefaultAsync();
-        
-        if (category == null)
+        if (project == null)
         {
             return false;
         }
 
-        var membership = category.Project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+        var category = await _db.ProjectCategories
+            .FirstOrDefaultAsync(c =>
+                c.ProjectCategoryId == categoryId &&
+                c.ProjectId == projectId);
 
-        if (membership?.Role != "Admin")
+        if (category == null)
         {
             return false;
         }
@@ -80,20 +67,21 @@ public class CategoryService
         return true;
     }
 
-    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(int categoryId)
+    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(int projectId, int categoryId)
     {
-        var categoryExists = await _db.ProjectCategories
-            .AnyAsync(c => c.ProjectCategoryId == categoryId);
+        var project = await _auth.GetProjectIfMemberAsync(projectId);
 
-        if (!categoryExists)
+        if (project == null)
         {
             return null;
         }
 
         var documents = await _db.Documents
-            .Where(d => d.ProjectCategoryId == categoryId)
+            .Where(d =>
+                d.ProjectCategoryId == categoryId &&
+                d.ProjectCategory.ProjectId == projectId)
             .ToListAsync();
-    
+
         return DocumentMapper.ToCategoryDocuments(documents);
     }
 }

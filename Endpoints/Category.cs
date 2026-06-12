@@ -21,16 +21,16 @@ public static class Categories
             return Results.Ok(newCategory);
         });
 
-        group.MapGet("/{categoryId}", async (CategoryService cate, int categoryId) =>
+        group.MapGet("/{categoryId}", async (CategoryService cate, int projectId, int categoryId) =>
         {
-            var documents = await cate.FetchCategoryDocumentsAsync(categoryId);
+            var documents = await cate.FetchCategoryDocumentsAsync(projectId, categoryId);
 
             return Results.Ok(documents);
         });
 
-        group.MapDelete("/{categoryId}", async (CategoryService cate, int categoryId) =>
+        group.MapDelete("/{categoryId}", async (CategoryService cate, int projectId, int categoryId) =>
         {
-            var sucess = await cate.DeleteCategoryAsync(categoryId);
+            var sucess = await cate.DeleteCategoryAsync(projectId, categoryId);
 
             if (!sucess)
             {
