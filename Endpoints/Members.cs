@@ -21,6 +21,17 @@ public static class Members
             return Results.Ok();
         });
 
+        group.MapPatch("/", async (MemberService memb, int projectId, EditMemberRequest request) =>
+        {
+            var success = await memb.EditMemberStatus(projectId, request);
+
+            if (!success)
+            {
+                return Results.BadRequest("Failed to add user to project");
+            }
+
+            return Results.Ok();
+        });
 
     }
 }

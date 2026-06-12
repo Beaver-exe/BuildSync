@@ -1,4 +1,6 @@
 using BuildSync.DTOs.Users;
+using BuildSync.DTOs.Member;
+using BuildSync.DTOs.Category;
 
 namespace BuildSync.DTOs.Project;
 
