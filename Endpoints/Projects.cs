@@ -55,5 +55,17 @@ public static class Projects
                 Project = updatedProject
             });
         });
+
+        app.MapDelete("/{projectId}", async (ProjectService proj, int projectId) =>
+        {
+           var sucess = await proj.DeleteProjectAsync(projectId) ;
+
+            if (!sucess)
+            {
+                return Results.BadRequest("Failed to delete project");
+            }
+
+            return Results.Ok();
+        });
     }
 }

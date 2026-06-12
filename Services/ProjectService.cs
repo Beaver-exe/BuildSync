@@ -17,6 +17,22 @@ public class ProjectService
         _currentUser = currentUser;
     }
 
+    private async Task<Project?> GetProjectWithUsersAsync(int projectId)
+    {
+        return await _db.Projects
+            .Include(p => p.ProjectUsers)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+    }
+
+    private bool IsAdmin(Project project)
+    {
+        var userId = _currentUser.UserId;
+
+        return project.ProjectUsers.Any(pu =>
+            pu.UserId == userId &&
+            pu.Role == "Admin");
+    }
+
     public async Task<GetProjectsResponse> RetrieveProjectsAsync()
     {
         var userId = _currentUser.UserId;
@@ -80,20 +96,16 @@ public class ProjectService
 
     public async Task<GetProjectDto?> EditProjectAsync(CreateProjectRequest request, int projectId)
     {   
-        var userId = _currentUser.UserId;
-
-        var project = await _db.Projects
-        .Include(p => p.ProjectUsers)
-        .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        var project = await GetProjectWithUsersAsync(projectId);
 
         if (project == null)
         {
             return null;
         }
 
-        var membership = project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+        var admin = IsAdmin(project);
 
-        if (membership?.Role != "Admin")
+        if (!admin)
         {
             return null;
         }
@@ -103,6 +115,28 @@ public class ProjectService
 
         await _db.SaveChangesAsync();
        
-        return ProjectMapper.ToSummaryDto(project, userId);
+        return ProjectMapper.ToSummaryDto(project, _currentUser.UserId);
+    }
+    
+    public async Task<bool> DeleteProjectAsync(int projectId)
+    {   
+        var project = await GetProjectWithUsersAsync(projectId);
+
+        if (project == null)
+        {
+            return false;
+        }
+
+        var admin = IsAdmin(project);
+
+        if (!admin)
+        {
+            return false;
+        }
+
+        _db.Projects.Remove(project);
+        await _db.SaveChangesAsync();
+
+        return true;
     }
 }
