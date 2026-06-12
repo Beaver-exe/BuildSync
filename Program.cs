@@ -77,8 +77,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<ProjectAuthorizationService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<CategoryService>();
@@ -88,15 +89,17 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/", () => "BuildSync API");
-app.MapUserEndpoints();
+
 app.MapAuthEndpoints();
+app.MapUserEndpoints();
 app.MapProjectEndpoints();
 app.MapCategoryEndpoints();
 
-app.UseSwagger();
-app.UseSwaggerUI();
 app.Run();
