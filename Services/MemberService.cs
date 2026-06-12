@@ -106,4 +106,53 @@ public class MemberService
 
         return true;
     }
+
+    public async Task<bool> RemoveMemberStatusAsync(int projectId, RemoveMemberRequest request)
+    {
+        var requesterId = _currentUser.UserId;
+
+        var resolved = await ResolveAdminUserAsync(projectId, request.Email);
+
+        if (resolved == null) {
+            return false;
+        }
+
+        var project = resolved.Project;
+
+        var requester = await _db.ProjectUsers
+            .FirstOrDefaultAsync(x =>
+                x.ProjectId == projectId &&
+                x.UserId == requesterId);
+
+        if (requester == null) {
+            return false;
+        }
+
+        var target = await _db.ProjectUsers
+            .FirstOrDefaultAsync(x =>
+                x.ProjectId == projectId &&
+                x.UserId == resolved.User.UserId);
+
+        if (target == null) {
+            return false;
+        }
+
+        if (requester.UserId == target.UserId) {
+            return false;
+        }
+
+        var isOwner = project.ProjectOwnerId == requesterId;
+        var canRemove =
+            (isOwner && true) ||
+            (requester.Role == "Admin" && target.Role == "Member");
+
+        if (!canRemove) {
+            return false;
+        }
+        
+        _db.ProjectUsers.Remove(target);
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
 }

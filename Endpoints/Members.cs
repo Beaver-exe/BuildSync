@@ -32,6 +32,17 @@ public static class Members
 
             return Results.Ok();
         });
-    
+
+        group.MapDelete("/", async (MemberService memb, int projectId, RemoveMemberRequest request) =>
+        {
+            var success = await memb.RemoveMemberStatusAsync(projectId, request);
+
+            if (!success)
+            {
+                return Results.BadRequest("Failed to add user to project");
+            }
+
+            return Results.Ok();
+        });
     }
 }
