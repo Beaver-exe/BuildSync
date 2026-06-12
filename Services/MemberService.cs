@@ -149,8 +149,37 @@ public class MemberService
         if (!canRemove) {
             return false;
         }
-        
+
         _db.ProjectUsers.Remove(target);
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> LeaveProjectAsync(int projectId)
+    {   
+        var userId = _currentUser.UserId;
+        
+        var project = await _auth.GetProjectIfMemberAsync(projectId);
+
+        if (project == null)
+        {
+            return false;
+        }
+
+        if (userId == project.ProjectOwnerId)
+        {
+            return false;
+        }
+
+        var member = await _db.ProjectUsers.FirstOrDefaultAsync(pu =>
+            pu.ProjectId == projectId &&
+            pu.UserId == userId);
+
+        if (member == null)
+            return false;
+
+        _db.ProjectUsers.Remove(member);
         await _db.SaveChangesAsync();
 
         return true;

@@ -39,7 +39,19 @@ public static class Members
 
             if (!success)
             {
-                return Results.BadRequest("Failed to add user to project");
+                return Results.BadRequest("Failed to remove user from project");
+            }
+
+            return Results.Ok();
+        });
+
+        group.MapDelete("/me", async (MemberService memb, int projectId, RemoveMemberRequest request) =>
+        {
+            var success = await memb.LeaveProjectAsync(projectId);
+
+            if (!success)
+            {
+                return Results.BadRequest("Failed to leave project");
             }
 
             return Results.Ok();
