@@ -53,6 +53,33 @@ public class CategoryService
         };
     }
 
+    public async Task<bool> DeleteCategoryAsync(int categoryId)
+    {
+        var userId = _currentUser.UserId;
+
+        var category = await _db.ProjectCategories
+            .Include(c => c.Project)
+                .ThenInclude(p => p.ProjectUsers)
+            .FirstOrDefaultAsync();
+        
+        if (category == null)
+        {
+            return false;
+        }
+
+        var membership = category.Project.ProjectUsers.FirstOrDefault(pu => pu.UserId == userId);
+
+        if (membership?.Role != "Admin")
+        {
+            return false;
+        }
+
+        _db.ProjectCategories.Remove(category);
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
+
     public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(int categoryId)
     {
         var categoryExists = await _db.ProjectCategories

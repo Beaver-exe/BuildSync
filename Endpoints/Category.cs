@@ -27,5 +27,17 @@ public static class Categories
 
             return Results.Ok(documents);
         });
+
+        app.MapDelete("/{categoryId}", async (CategoryService cate, int categoryId) =>
+        {
+            var sucess = await cate.DeleteCategoryAsync(categoryId);
+
+            if (!sucess)
+            {
+                return Results.BadRequest("Failed to delete category");
+            }
+
+            return Results.Ok();
+        });
     }
 }
