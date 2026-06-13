@@ -1,11 +1,11 @@
 using BuildSync.DTOs.Project;
 using BuildSync.Services;
 
-namespace BuildSync.EndpoGuids;
+namespace BuildSync.Endpoints;
 
 public static class Projects
 {
-    public static void MapProjectEndpoGuids(this WebApplication app)
+    public static void MapProjectEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/projects").RequireAuthorization();
         
