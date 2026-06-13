@@ -21,14 +21,14 @@ public static class Categories
             return Results.Ok(newCategory);
         });
 
-        group.MapGet("/{categoryId}", async (CategoryService cate, Guid projectId, int categoryId) =>
+        group.MapGet("/{categoryId}", async (CategoryService cate, Guid projectId, Guid categoryId) =>
         {
             var documents = await cate.FetchCategoryDocumentsAsync(projectId, categoryId);
 
             return Results.Ok(documents);
         });
 
-        group.MapDelete("/{categoryId}", async (CategoryService cate, Guid projectId, int categoryId) =>
+        group.MapDelete("/{categoryId}", async (CategoryService cate, Guid projectId, Guid categoryId) =>
         {
             var sucess = await cate.DeleteCategoryAsync(projectId, categoryId);
 

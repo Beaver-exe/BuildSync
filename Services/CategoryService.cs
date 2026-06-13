@@ -37,12 +37,12 @@ public class CategoryService
 
         return new ProjectCategoryDto
         {
-            ProjectCategoryId = category.ProjectCategoryId,
+            GCategoryId = category.GCategoryId,
             CategoryName = category.CategoryName
         };
     }
 
-    public async Task<bool> DeleteCategoryAsync(Guid projectId, int categoryId)
+    public async Task<bool> DeleteCategoryAsync(Guid projectId, Guid categoryId)
     {
         var project = await _auth.GetProjectIfAdminAsync(projectId);
 
@@ -53,7 +53,7 @@ public class CategoryService
 
         var category = await _db.ProjectCategories
             .FirstOrDefaultAsync(c =>
-                c.ProjectCategoryId == categoryId &&
+                c.GCategoryId == categoryId &&
                 c.ProjectId == project.ProjectId);
 
         if (category == null)
@@ -67,7 +67,7 @@ public class CategoryService
         return true;
     }
 
-    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(Guid projectId, int categoryId)
+    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(Guid projectId, Guid categoryId)
     {
         var project = await _auth.GetProjectIfMemberAsync(projectId);
 
@@ -76,9 +76,19 @@ public class CategoryService
             return null;
         }
 
+        var category = await _db.ProjectCategories
+            .FirstOrDefaultAsync(c =>
+                c.GCategoryId == categoryId &&
+                c.ProjectId == project.ProjectId);
+
+        if (category == null)
+        {
+            return null;
+        }
+
         var documents = await _db.Documents
             .Where(d =>
-                d.ProjectCategoryId == categoryId &&
+                d.ProjectCategoryId == category.ProjectCategoryId &&
                 d.ProjectCategory.ProjectId == project.ProjectId)
             .ToListAsync();
 
