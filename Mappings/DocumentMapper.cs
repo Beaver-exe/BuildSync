@@ -9,7 +9,7 @@ public static class DocumentMapper
     {
         return new CategoryDocument
         {
-            DocumentId = document.DocumentId,
+            GDocumentId = document.GDocumentId,
             FileName = document.FileName,
             UploadedAt = document.UploadedAt
         };

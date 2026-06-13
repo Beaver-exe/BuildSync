@@ -38,7 +38,7 @@ public static class ProjectMapper
             
             Categories = project.Categories.Select(c => new ProjectCategoryDto
             {
-                ProjectCategoryId = c.ProjectCategoryId,
+                GCategoryId = c.GCategoryId,
                 CategoryName = c.CategoryName
             }).ToList()
         };
