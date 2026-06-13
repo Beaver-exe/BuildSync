@@ -18,50 +18,39 @@ public class MemberService
         _auth = auth;
     }
 
-    private class ProjectUserResolution
+    private async Task<Project?> ResolveAdminProjectAsync(int projectId)
     {
-        public Project Project { get; set; } = null!;
-        public User User { get; set; } = null!;
+        return await _auth.GetProjectIfAdminAsync(projectId);
     }
 
-    private async Task<ProjectUserResolution?> ResolveAdminUserAsync(int projectId, string email)
+    private async Task<User?> ResolveUserAsync(Guid userGuid)
     {
-        var project = await _auth.GetProjectIfAdminAsync(projectId);
+        return await _db.Users
+            .FirstOrDefaultAsync(u => u.GUserId == userGuid);
+    }
+
+    public async Task<bool> AddMemberAsync(int projectId, AddMemberRequest request)
+    {
+        var email = request.Email.Trim().ToLower();
+
+        var invitedUser = await _db.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        if (invitedUser == null)
+        {
+            return false;
+        }
+
+        var project = await ResolveAdminProjectAsync(projectId);
 
         if (project == null)
-        {
-            return null;
-        }
-
-        var normalizedEmail = email.Trim().ToLower();
-
-        var user = await _db.Users
-            .FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
-
-        if (user == null)
-        {
-            return null;
-        }
-
-        return new ProjectUserResolution
-        {
-            Project = project,
-            User = user
-        };
-    }
-
-    public async Task<bool> AddMemberAsync(int projectId, MemberRequest request)
-    {
-        var result = await ResolveAdminUserAsync(projectId, request.Email);
-
-        if (result == null)
         {
             return false;
         }
 
         var exists = await _db.ProjectUsers.AnyAsync(pu =>
             pu.ProjectId == projectId &&
-            pu.UserId == result.User.UserId);
+            pu.UserId == invitedUser.UserId);
 
         if (exists)
         {
@@ -71,7 +60,7 @@ public class MemberService
         var projUser = new ProjectUser
         {
             ProjectId = projectId,
-            UserId = result.User.UserId,
+            UserId = invitedUser.UserId,
             Role = request.Role,
             AddedAt = DateTime.UtcNow
         };
@@ -82,11 +71,18 @@ public class MemberService
         return true;
     }
 
-    public async Task<bool> EditMemberStatus(int projectId, MemberRequest request)
+    public async Task<bool> EditMemberStatus(int projectId, Guid userGuid, EditMemberRequest request)
     {
-        var result = await ResolveAdminUserAsync(projectId, request.Email);
+        var project = await ResolveAdminProjectAsync(projectId);
 
-        if (result == null)
+        if (project == null)
+        {
+            return false;
+        }
+
+        var user = await ResolveUserAsync(userGuid);
+
+        if (user == null)
         {
             return false;
         }
@@ -94,7 +90,7 @@ public class MemberService
         var membership = await _db.ProjectUsers
             .FirstOrDefaultAsync(pu =>
                 pu.ProjectId == projectId &&
-                pu.UserId == result.User.UserId);
+                pu.UserId == user.UserId);
 
         if (membership == null)
         {
@@ -107,46 +103,57 @@ public class MemberService
         return true;
     }
 
-    public async Task<bool> RemoveMemberStatusAsync(int projectId, RemoveMemberRequest request)
+    public async Task<bool> RemoveMemberStatusAsync(int projectId, Guid userGuid)
     {
         var requesterId = _currentUser.UserId;
 
-        var resolved = await ResolveAdminUserAsync(projectId, request.Email);
+        var project = await ResolveAdminProjectAsync(projectId);
 
-        if (resolved == null) {
+        if (project == null)
+        {
             return false;
         }
 
-        var project = resolved.Project;
+        var user = await ResolveUserAsync(userGuid);
+
+        if (user == null)
+        {
+            return false;
+        }
 
         var requester = await _db.ProjectUsers
             .FirstOrDefaultAsync(x =>
                 x.ProjectId == projectId &&
                 x.UserId == requesterId);
 
-        if (requester == null) {
+        if (requester == null)
+        {
             return false;
         }
 
         var target = await _db.ProjectUsers
             .FirstOrDefaultAsync(x =>
                 x.ProjectId == projectId &&
-                x.UserId == resolved.User.UserId);
+                x.UserId == user.UserId);
 
-        if (target == null) {
+        if (target == null)
+        {
             return false;
         }
 
-        if (requester.UserId == target.UserId) {
+        if (requester.UserId == target.UserId)
+        {
             return false;
         }
 
         var isOwner = project.ProjectOwnerId == requesterId;
+
         var canRemove =
-            (isOwner && true) ||
+            isOwner ||
             (requester.Role == "Admin" && target.Role == "Member");
 
-        if (!canRemove) {
+        if (!canRemove)
+        {
             return false;
         }
 
@@ -157,9 +164,9 @@ public class MemberService
     }
 
     public async Task<bool> LeaveProjectAsync(int projectId)
-    {   
+    {
         var userId = _currentUser.UserId;
-        
+
         var project = await _auth.GetProjectIfMemberAsync(projectId);
 
         if (project == null)
@@ -177,7 +184,9 @@ public class MemberService
             pu.UserId == userId);
 
         if (member == null)
+        {
             return false;
+        }
 
         _db.ProjectUsers.Remove(member);
         await _db.SaveChangesAsync();

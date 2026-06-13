@@ -9,7 +9,7 @@ public static class Members
     {
         var group = app.MapGroup("/projects/{projectId}/members").RequireAuthorization();
 
-        group.MapPost("/", async (MemberService memb, int projectId, MemberRequest request) =>
+        group.MapPost("/", async (MemberService memb, int projectId, AddMemberRequest request) =>
         {
             var success = await memb.AddMemberAsync(projectId, request);
 
@@ -21,9 +21,9 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapPatch("/", async (MemberService memb, int projectId, MemberRequest request) =>
+        group.MapPatch("/{userGuid}", async (MemberService memb, int projectId, Guid userGuid, EditMemberRequest request) =>
         {
-            var success = await memb.EditMemberStatus(projectId, request);
+            var success = await memb.EditMemberStatus(projectId, userGuid, request);
 
             if (!success)
             {
@@ -33,9 +33,9 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapDelete("/", async (MemberService memb, int projectId, RemoveMemberRequest request) =>
+        group.MapDelete("/{userGuid}", async (MemberService memb, int projectId, Guid userGuid) =>
         {
-            var success = await memb.RemoveMemberStatusAsync(projectId, request);
+            var success = await memb.RemoveMemberStatusAsync(projectId, userGuid);
 
             if (!success)
             {
@@ -45,7 +45,7 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapDelete("/me", async (MemberService memb, int projectId, RemoveMemberRequest request) =>
+        group.MapDelete("/me", async (MemberService memb, int projectId) =>
         {
             var success = await memb.LeaveProjectAsync(projectId);
 
