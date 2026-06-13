@@ -19,7 +19,7 @@ public static class ProjectMapper
 
             ProjectOwner = new UserDto
             {
-                UserId = project.ProjectOwner.UserId,
+                GUserId = project.ProjectOwner.GUserId,
                 FirstName = project.ProjectOwner.FirstName,
                 LastName = project.ProjectOwner.LastName,
                 Profession = project.ProjectOwner.Profession,
