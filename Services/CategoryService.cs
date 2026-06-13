@@ -17,7 +17,7 @@ public class CategoryService
         _auth = auth;
     }
 
-    public async Task<ProjectCategoryDto?> CreateCategoryAsync(int projectId, CreateCategoryRequest request)
+    public async Task<ProjectCategoryDto?> CreateCategoryAsync(Guid projectId, CreateCategoryRequest request)
     {
         var project = await _auth.GetProjectIfAdminAsync(projectId);
 
@@ -29,7 +29,7 @@ public class CategoryService
         var category = new ProjectCategory
         {
             CategoryName = request.CategoryName,
-            ProjectId = projectId
+            ProjectId = project.ProjectId
         };
 
         _db.ProjectCategories.Add(category);
@@ -42,7 +42,7 @@ public class CategoryService
         };
     }
 
-    public async Task<bool> DeleteCategoryAsync(int projectId, int categoryId)
+    public async Task<bool> DeleteCategoryAsync(Guid projectId, int categoryId)
     {
         var project = await _auth.GetProjectIfAdminAsync(projectId);
 
@@ -54,7 +54,7 @@ public class CategoryService
         var category = await _db.ProjectCategories
             .FirstOrDefaultAsync(c =>
                 c.ProjectCategoryId == categoryId &&
-                c.ProjectId == projectId);
+                c.ProjectId == project.ProjectId);
 
         if (category == null)
         {
@@ -67,7 +67,7 @@ public class CategoryService
         return true;
     }
 
-    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(int projectId, int categoryId)
+    public async Task<List<CategoryDocument>?> FetchCategoryDocumentsAsync(Guid projectId, int categoryId)
     {
         var project = await _auth.GetProjectIfMemberAsync(projectId);
 
@@ -79,7 +79,7 @@ public class CategoryService
         var documents = await _db.Documents
             .Where(d =>
                 d.ProjectCategoryId == categoryId &&
-                d.ProjectCategory.ProjectId == projectId)
+                d.ProjectCategory.ProjectId == project.ProjectId)
             .ToListAsync();
 
         return DocumentMapper.ToCategoryDocuments(documents);

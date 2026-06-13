@@ -9,7 +9,7 @@ public static class Categories
     {
         var group = app.MapGroup("/projects/{projectsId}/categories").RequireAuthorization();
 
-        group.MapPost("/", async (CategoryService cate, int projectId, CreateCategoryRequest request) =>
+        group.MapPost("/", async (CategoryService cate, Guid projectId, CreateCategoryRequest request) =>
         {
             var newCategory = await cate.CreateCategoryAsync(projectId, request);
 
@@ -21,14 +21,14 @@ public static class Categories
             return Results.Ok(newCategory);
         });
 
-        group.MapGet("/{categoryId}", async (CategoryService cate, int projectId, int categoryId) =>
+        group.MapGet("/{categoryId}", async (CategoryService cate, Guid projectId, int categoryId) =>
         {
             var documents = await cate.FetchCategoryDocumentsAsync(projectId, categoryId);
 
             return Results.Ok(documents);
         });
 
-        group.MapDelete("/{categoryId}", async (CategoryService cate, int projectId, int categoryId) =>
+        group.MapDelete("/{categoryId}", async (CategoryService cate, Guid projectId, int categoryId) =>
         {
             var sucess = await cate.DeleteCategoryAsync(projectId, categoryId);
 

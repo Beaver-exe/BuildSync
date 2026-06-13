@@ -38,7 +38,7 @@ public class ProjectService
         };
     }
 
-    public async Task<ProjectDto?> RetrieveProjectAsync(int projectId)
+    public async Task<ProjectDto?> RetrieveProjectAsync(Guid projectId)
     {
         var project = await _auth.GetProjectIfMemberAsync(projectId);
 
@@ -70,7 +70,7 @@ public class ProjectService
         return ProjectMapper.ToSummaryDto(project, userId);
     }
 
-    public async Task<GetProjectDto?> EditProjectAsync(CreateProjectRequest request, int projectId)
+    public async Task<GetProjectDto?> EditProjectAsync(CreateProjectRequest request, Guid projectId)
     {
         var project = await _auth.GetProjectIfAdminAsync(projectId);
 
@@ -87,7 +87,7 @@ public class ProjectService
         return ProjectMapper.ToSummaryDto(project, _currentUser.UserId);
     }
 
-    public async Task<bool> DeleteProjectAsync(int projectId)
+    public async Task<bool> DeleteProjectAsync(Guid projectId)
     {
         var project = await _auth.GetProjectIfAdminAsync(projectId);
 

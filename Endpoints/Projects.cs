@@ -1,11 +1,11 @@
 using BuildSync.DTOs.Project;
 using BuildSync.Services;
 
-namespace BuildSync.Endpoints;
+namespace BuildSync.EndpoGuids;
 
 public static class Projects
 {
-    public static void MapProjectEndpoints(this WebApplication app)
+    public static void MapProjectEndpoGuids(this WebApplication app)
     {
         var group = app.MapGroup("/projects").RequireAuthorization();
         
@@ -15,7 +15,7 @@ public static class Projects
             return Results.Ok(projects);
         });
 
-        group.MapGet("/{projectId}", async (ProjectService proj, int projectId) =>
+        group.MapGet("/{projectId}", async (ProjectService proj, Guid projectId) =>
         {
             var project = await proj.RetrieveProjectAsync(projectId);
 
@@ -41,7 +41,7 @@ public static class Projects
 
         });
 
-        group.MapPatch("/{projectId}", async (ProjectService proj, CreateProjectRequest request, int projectId) => 
+        group.MapPatch("/{projectId}", async (ProjectService proj, CreateProjectRequest request, Guid projectId) => 
         {
             var updatedProject = await proj.EditProjectAsync(request, projectId);
 
@@ -56,7 +56,7 @@ public static class Projects
             });
         });
 
-        group.MapDelete("/{projectId}", async (ProjectService proj, int projectId) =>
+        group.MapDelete("/{projectId}", async (ProjectService proj, Guid projectId) =>
         {
            var sucess = await proj.DeleteProjectAsync(projectId) ;
 

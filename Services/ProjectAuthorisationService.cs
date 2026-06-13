@@ -15,27 +15,27 @@ public class ProjectAuthorizationService
         _currentUser = currentUser;
     }
 
-    public async Task<Project?> GetProjectIfAdminAsync(int projectId)
+    public async Task<Project?> GetProjectIfAdminAsync(Guid projectId)
     {
         var userId = _currentUser.UserId;
 
         return await _db.Projects
             .Include(p => p.ProjectUsers)
             .FirstOrDefaultAsync(p =>
-                p.ProjectId == projectId &&
+                p.GProjectId == projectId &&
                 p.ProjectUsers.Any(pu =>
                     pu.UserId == userId &&
                     pu.Role == "Admin"));
     }
 
-    public async Task<Project?> GetProjectIfMemberAsync(int projectId)
+    public async Task<Project?> GetProjectIfMemberAsync(Guid projectId)
     {
         var userId = _currentUser.UserId;
 
         return await _db.Projects
             .Include(p => p.ProjectUsers)
             .FirstOrDefaultAsync(p =>
-                p.ProjectId == projectId &&
+                p.GProjectId == projectId &&
                 p.ProjectUsers.Any(pu =>
                     pu.UserId == userId));
     }

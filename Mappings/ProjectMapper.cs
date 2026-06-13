@@ -12,7 +12,7 @@ public static class ProjectMapper
     {
         return new ProjectDto
         {
-            ProjectId = project.ProjectId,
+            GProjectId = project.GProjectId,
             ProjectName = project.ProjectName,
             ProjectDescription = project.ProjectDescription,
             ProjectOwnerId = project.ProjectOwnerId,
@@ -28,6 +28,7 @@ public static class ProjectMapper
 
             ProjectUsers = project.ProjectUsers.Select(pu => new ProjectUserDto
             {
+                GUserId = pu.User.GUserId,
                 FirstName = pu.User.FirstName,
                 LastName = pu.User.LastName,
                 Email = pu.User.Email,
@@ -47,7 +48,7 @@ public static class ProjectMapper
     {
         return new GetProjectDto
         {
-            ProjectId = project.ProjectId,
+            GProjectId = project.GProjectId,
             ProjectName = project.ProjectName,
             ProjectDescription = project.ProjectDescription,
             IsOwner = project.ProjectOwnerId == currentUserId,
