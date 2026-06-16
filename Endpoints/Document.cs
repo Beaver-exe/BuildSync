@@ -65,5 +65,23 @@ public static class Documents
 
             return Results.Ok();
         });
+
+        group.MapPatch("/{documentId}", 
+        async (
+            DocumentService docu, 
+            Guid projectId, 
+            Guid categoryId, 
+            Guid documentId,
+            EditDocumentRequest request) =>
+        {
+            var document = await docu.EditDocumentAsync(projectId, categoryId, documentId, request);
+
+            if (document == null)
+            {
+                return Results.BadRequest();
+            }
+
+            return Results.Ok(document);
+        });
     }
 }

@@ -61,7 +61,7 @@ public class DocumentService
         var document = new Document
         {
             GDocumentId = Guid.NewGuid(),
-            FileName = request.File.FileName,
+            FileName = request.FileName ?? request.File.FileName,
             ContentType = request.File.ContentType,
             FileSize = request.File.Length,
             Data = memoryStream.ToArray(),
@@ -106,5 +106,61 @@ public class DocumentService
         await _db.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<Document?> EditDocumentAsync(
+        Guid projectId,
+        Guid categoryId,
+        Guid documentId,
+        EditDocumentRequest request)
+    {
+        var document = await _db.Documents
+            .Include(d => d.ProjectCategory)
+            .ThenInclude(pc => pc.Project)
+            .FirstOrDefaultAsync(d =>
+                d.GDocumentId == documentId &&
+                d.ProjectCategory.GCategoryId == categoryId &&
+                d.ProjectCategory.Project.GProjectId == projectId);
+
+        if (document == null)
+        {
+            return null;
+        }
+
+        var isOwner = document.UploadedByUserId == _currentUser.UserId;
+
+        var isAdmin = await _db.ProjectUsers.AnyAsync(pu =>
+            pu.ProjectId == document.ProjectCategory.ProjectId &&
+            pu.UserId == _currentUser.UserId &&
+            pu.Role == "Admin");
+
+        if (!isOwner && !isAdmin)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.FileName))
+        {
+            document.FileName = request.FileName;
+        }
+
+        if (request.File is not null)
+        {
+            using var ms = new MemoryStream();
+            await request.File.CopyToAsync(ms);
+
+            document.Data = ms.ToArray();
+            document.ContentType = request.File.ContentType;
+            document.FileSize = request.File.Length;
+
+            if (string.IsNullOrWhiteSpace(request.FileName))
+            {
+                document.FileName = request.File.FileName;
+            }
+        }
+
+        await _db.SaveChangesAsync();
+
+        return document;
     }
 }
