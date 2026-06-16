@@ -7,7 +7,9 @@ public static class Members
 {
     public static void MapMemberEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/projects/{projectId}/members").RequireAuthorization();
+        var group = app.MapGroup("/projects/{projectId}/members")
+        .WithTags("Members")
+        .RequireAuthorization();
 
         group.MapPost("/", async (MemberService memb, Guid projectId, AddMemberRequest request) =>
         {
@@ -21,9 +23,9 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapPatch("/{userGuid}", async (MemberService memb, Guid projectId, Guid userGuid, EditMemberRequest request) =>
+        group.MapPatch("/{userId}", async (MemberService memb, Guid projectId, Guid userId, EditMemberRequest request) =>
         {
-            var success = await memb.EditMemberStatus(projectId, userGuid, request);
+            var success = await memb.EditMemberStatus(projectId, userId, request);
 
             if (!success)
             {
@@ -33,9 +35,9 @@ public static class Members
             return Results.Ok();
         });
 
-        group.MapDelete("/{userGuid}", async (MemberService memb, Guid projectId, Guid userGuid) =>
+        group.MapDelete("/{userId}", async (MemberService memb, Guid projectId, Guid userId) =>
         {
-            var success = await memb.RemoveMemberStatusAsync(projectId, userGuid);
+            var success = await memb.RemoveMemberStatusAsync(projectId, userId);
 
             if (!success)
             {

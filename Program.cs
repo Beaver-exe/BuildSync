@@ -82,6 +82,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<ProjectAuthorizationService>();
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<MemberService>();
@@ -97,8 +98,6 @@ app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapGet("/", () => "BuildSync API");
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();

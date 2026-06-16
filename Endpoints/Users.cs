@@ -6,7 +6,9 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/users").RequireAuthorization();
+        var group = app.MapGroup("/users")
+        .WithTags("Users")
+        .RequireAuthorization();
 
         group.MapGet("/me", async (UserService userSvc) =>
         {
@@ -20,9 +22,9 @@ public static class UserEndpoints
             return Results.Ok(user);
         });
 
-        group.MapGet("/{userGuid}", async (UserService userSvc, Guid userGuid) =>
+        group.MapGet("/{userId}", async (UserService userSvc, Guid userId) =>
         {
-            var user = await userSvc.GetUserDtoAsync(userGuid);
+            var user = await userSvc.GetUserDtoAsync(userId);
 
             if (user == null)
             {

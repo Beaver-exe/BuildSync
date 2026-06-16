@@ -7,7 +7,9 @@ public static class Categories
 {
     public static void MapCategoryEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/projects/{projectsId}/categories").RequireAuthorization();
+        var group = app.MapGroup("/projects/{projectsId}/categories")
+        .WithTags("Categories")
+        .RequireAuthorization();
 
         group.MapPost("/", async (CategoryService cate, Guid projectId, CreateCategoryRequest request) =>
         {

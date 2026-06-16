@@ -8,6 +8,7 @@ public static class Documents
     public static void MapDocumentEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/projects/{projectId}/categories/{categoryId}/documents")
+            .WithTags("Documents")
             .RequireAuthorization();
 
         group.MapGet("/{documentId}", 
