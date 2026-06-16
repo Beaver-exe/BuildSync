@@ -76,4 +76,35 @@ public class DocumentService
         return DocumentMapper.ToCategoryDocument(document);
     }
 
+    public async Task<bool> DeleteDocumentAsync(Guid projectId, Guid categoryId, Guid documentId)
+    {
+        var document = await _db.Documents
+            .Include(d => d.ProjectCategory)
+            .ThenInclude(pc => pc.Project)
+            .FirstOrDefaultAsync(d =>
+                d.GDocumentId == documentId &&
+                d.ProjectCategory.GCategoryId == categoryId &&
+                d.ProjectCategory.Project.GProjectId == projectId);
+
+        if (document == null)
+        {
+            return false;
+        }
+
+        var isOwner = document.UploadedByUserId == _currentUser.UserId;
+        var isAdmin = await _db.ProjectUsers.AnyAsync(pu =>
+            pu.ProjectId == document.ProjectCategory.ProjectId &&
+            pu.UserId == _currentUser.UserId &&
+            pu.Role == "Admin");
+
+        if (!isOwner && !isAdmin)
+        {
+            return false;
+        }
+
+        _db.Documents.Remove(document);
+        await _db.SaveChangesAsync();
+
+        return true;
+    }
 }

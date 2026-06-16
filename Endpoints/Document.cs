@@ -48,5 +48,22 @@ public static class Documents
             return Results.Ok(document);
 
         });
+
+        group.MapDelete("/{documentId}", 
+        async (
+            DocumentService docu, 
+            Guid projectId, 
+            Guid categoryId, 
+            Guid documentId) =>
+        {
+            var success = await docu.DeleteDocumentAsync(projectId, categoryId, documentId);
+
+            if (!success)
+            {
+                return Results.BadRequest();
+            }
+
+            return Results.Ok();
+        });
     }
 }
