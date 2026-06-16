@@ -11,7 +11,8 @@ public static class DocumentMapper
         {
             GDocumentId = document.GDocumentId,
             FileName = document.FileName,
-            UploadedAt = document.UploadedAt
+            UploadedAt = document.UploadedAt,
+            FileSize = document.FileSize
         };
     }
 

@@ -56,4 +56,18 @@ public class ProjectAuthorizationService
         return project.ProjectUsers.Any(pu =>
             pu.UserId == userId);
     }
+
+    public async Task<bool> CanAccessProjectCategoryAsync(
+        Guid projectId,
+        Guid categoryId)
+    {
+        var userId = _currentUser.UserId;
+
+        return await _db.Projects
+            .AnyAsync(p =>
+                p.GProjectId == projectId &&
+                p.ProjectUsers.Any(pu => pu.UserId == userId) &&
+                p.Categories.Any(c => c.GCategoryId == categoryId));
+    }
+
 }

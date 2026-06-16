@@ -85,6 +85,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<MemberService>();
+builder.Services.AddScoped<DocumentService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -104,5 +105,6 @@ app.MapUserEndpoints();
 app.MapProjectEndpoints();
 app.MapCategoryEndpoints();
 app.MapMemberEndpoints();
+app.MapDocumentEndpoints();
 
 app.Run();
