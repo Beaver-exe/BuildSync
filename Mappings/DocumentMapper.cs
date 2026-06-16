@@ -1,4 +1,5 @@
 using BuildSync.DTOs.Category;
+using BuildSync.DTOs.Users;
 using BuildSync.Models;
 
 namespace BuildSync.Mappings;
@@ -12,7 +13,14 @@ public static class DocumentMapper
             GDocumentId = document.GDocumentId,
             FileName = document.FileName,
             UploadedAt = document.UploadedAt,
-            FileSize = document.FileSize
+            FileSize = document.FileSize,
+            UploadedByUser = new UploadedByUser
+            {
+                GUserId = document.UploadedByUser.GUserId,
+                FirstName = document.UploadedByUser.FirstName,
+                LastName = document.UploadedByUser.LastName,
+                Profession = document.UploadedByUser.Profession
+            }
         };
     }
 
