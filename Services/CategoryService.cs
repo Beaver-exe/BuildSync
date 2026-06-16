@@ -28,6 +28,7 @@ public class CategoryService
 
         var category = new ProjectCategory
         {
+            GCategoryId = Guid.NewGuid(),
             CategoryName = request.CategoryName,
             ProjectId = project.ProjectId
         };

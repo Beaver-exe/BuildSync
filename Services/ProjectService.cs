@@ -53,6 +53,7 @@ public class ProjectService
 
         var project = new Project
         {
+            GProjectId = Guid.NewGuid(),
             ProjectName = request.ProjectName,
             ProjectDescription = request.ProjectDescription,
             ProjectOwnerId = userId

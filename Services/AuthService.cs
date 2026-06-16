@@ -30,6 +30,7 @@ public class AuthService
 
         var user = new User
         {
+            GUserId = Guid.NewGuid(),
             FirstName = request.FirstName,
             LastName = request.LastName,
             Profession = request.Profession,
