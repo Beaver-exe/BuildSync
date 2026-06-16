@@ -1,5 +1,8 @@
 
 using BuildSync.Data;
+using BuildSync.DTOs.Category;
+using BuildSync.DTOs.Document;
+using BuildSync.Mappings;
 using BuildSync.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +35,45 @@ public class DocumentService
         if (document == null){
             return null;
         }
-        
+
         return document;
     }
+
+    public async Task<CategoryDocument?> UploadDocumentAsync(Guid projectId, Guid categoryId, UploadDocumentRequest request)
+    {
+        var isMember = await _auth.CanAccessProjectCategoryAsync(projectId, categoryId);
+
+        if (!isMember)
+        {
+            return null;
+        }
+
+        var category = await _db.ProjectCategories.FirstOrDefaultAsync(pc => pc.GCategoryId == categoryId);
+
+        if (category == null)
+        {
+            return null;
+        }
+
+        using var memoryStream = new MemoryStream();
+        await request.File.CopyToAsync(memoryStream);
+
+        var document = new Document
+        {
+            GDocumentId = Guid.NewGuid(),
+            FileName = request.File.FileName,
+            ContentType = request.File.ContentType,
+            FileSize = request.File.Length,
+            Data = memoryStream.ToArray(),
+
+            UploadedByUserId = _currentUser.UserId,
+            ProjectCategoryId = category.ProjectCategoryId
+        };
+
+        _db.Documents.Add(document);
+        await _db.SaveChangesAsync();
+        
+        return DocumentMapper.ToCategoryDocument(document);
+    }
+
 }

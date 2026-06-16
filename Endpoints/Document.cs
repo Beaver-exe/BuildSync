@@ -7,7 +7,8 @@ public static class Documents
 {
     public static void MapDocumentEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/projects/{projectId}/categories/{categoryId}/documents").RequireAuthorization();
+        var group = app.MapGroup("/projects/{projectId}/categories/{categoryId}/documents")
+            .RequireAuthorization();
 
         group.MapGet("/{documentId}", 
         async (
@@ -20,14 +21,32 @@ public static class Documents
 
             if (document == null)
             {
-                return Results.BadRequest();
+                return Results.NotFound();
             }
 
             return Results.File(
-                document.FilePath,
+                document.Data,
                 document.ContentType,
                 document.FileName
             );
+        });
+
+        group.MapPost("/", 
+        async (
+            DocumentService docu,
+            Guid projectId,
+            Guid categoryId,
+            UploadDocumentRequest request) =>
+        {
+            var document = await docu.UploadDocumentAsync(projectId, categoryId, request);
+
+            if (document == null)
+            {
+                return Results.BadRequest("Failed to upload document");
+            }
+
+            return Results.Ok(document);
+
         });
     }
 }
