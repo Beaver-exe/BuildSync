@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "BuildSync": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
