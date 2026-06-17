@@ -1,6 +1,68 @@
-bin
-obj
+# =====================
+# ASP.NET Core
+# =====================
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET publish / build output
+publish/
+wwwroot/
+
+# =====================
+# Secrets / Environment
+# =====================
 .env
-appsettings.Development.json
-appsettings.json
+
+# =====================
+# Angular / Frontend
+# =====================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# =====================
+# Logs
+# =====================
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+testem.log*
+
+# =====================
+# IDEs / Editors
+# =====================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# =====================
+# OS files
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Misc
+# =====================
+coverage/
+.sass-cache/
+.history/
+.angular/cache/
+
 BuildSync Stuff.txt
